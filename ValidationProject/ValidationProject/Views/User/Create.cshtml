@@ -1,0 +1,134 @@
+﻿<style>
+    html, body{
+        display:block
+    }
+    input:valid{
+        border : 2px green solid
+    }
+
+    input :invalid {
+
+        border: 2px red solid
+    }
+  
+</style>
+
+<h1>Kullanıcı Ekle</h1>
+@if (ViewData.ContainsKey("UserAdded"))
+{
+    if (ViewData["UserAdded"].Equals(true))
+    {
+        // "kullanıcı kayıt edildi" mesajını veren bootstrap alert'i için gerekli HTML kodu (alert-success)
+    }
+}
+<form novalidate class="form-control" method="post" id="formId">
+    <div class="mb-3">
+        <label for="nameInput" class="form-label">Name</label>
+        <input  name ="Name" type="text" class="form-control" id="nameInput" required pattern = "[a-z A-Z ]{2,}"  placeholder="Please enter your name" @*data-message="Lütfen en az 2 char"*@>
+        <div id="name" class="form-text"></div>
+    </div>
+    <div class="mb-3">
+        <label for="surnameInput" class="form-label">Surname</label>
+        <input name="Surname" type="text" class="form-control" id="surnameInput" required pattern="[a-z A-Z ]{2,}" placeholder="Please enter your surname">
+        <div id="surname" class="form-text"></div>
+    </div>
+    <div class="mb-3">
+        <label for="birthdayInput" class="form-label">Birthday</label>
+        <input name="Birthday" type="datetime-local" class="form-control" required min="1900-01-01" id="birthdayInput">
+        <div id="birthday" class="form-text"></div>
+    </div>
+    <div class="mb-3">
+        <label for="phoneInput" class="form-label">Phone Number</label>
+        <input type="tel" class="form-control" id="phoneInput">
+        <div id="phone" class="form-text"></div>
+        <div class="alert alert-danger"></div>
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+    </div>
+    <div class="mb-3">
+        <label for="AddressInput" class="form-label">Address</label>
+        @*<input type="text" class="form-control" id="AddressInput">*@
+        <textarea rows=" 5" cols="30" id="phoneInput"></textarea>
+        <div id="address" class="form-text"></div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg">Add User</button>
+</form>
+
+<script>
+    const todayDate = new Date.toISOString().split('T')[0];
+    const inputDate = document.querySelector('#birthdayInput');
+    const minDate = inputDate.getAttribute('min');
+    inputDate.setAttribute('max', todayDate);
+    const errorMassage = 'Doğum tarihi ${mindate}' ile ${max}
+
+    const form = document.querySelector("#formId");
+    const inputArray =Array.from(form.querySelectorAll('input, textarea'));
+
+    form.addEventListener('submit',function(e){
+        e.preventDefault();
+
+        let invalidCount = 0;
+
+        inputArray.forEach(inp => {
+            if (!inp.validity.valid) {
+
+                showAlert(inp);
+                invalidCount++;
+
+                return;
+            }
+           hideInvalifAlert();
+        });
+        if (invalidCount == 0) {
+            form.submit();
+        }
+    })
+
+   
+
+
+    function showAlert(inp){
+        if(inp.parentElemet.quertSelectorAll(".alert").lenth){
+            return;
+        }
+
+        const alert = document.createElement('div');
+
+        const text = document.createElement('span');
+
+        text.innerText = inp.getAttribute('data-message');
+
+        alert.classList.append("alert","alert-danger","mt-1","p-2");
+
+        alert.append(text);
+        inp.parentElement.appendChild(alert);
+        setTimeout(()=>{
+            startRemove(alert);
+        },3000);
+    }
+
+    function hideInvalifAlert(){
+        const alerts = Array.from(inp.parentElement.querrySelectorAll(".alert"))
+        alerts.forEach(a => a.remove());
+
+    }
+
+    function startRemove(inp){
+        let opacity = 1;
+
+        let handle = setInterval(() => {
+            if(opacity <=0)
+            {
+                inp.remove();
+                clearInterval(handle);
+                return;
+            }
+
+            opacity -= 0.02;
+            inp.style.opcity = opacity;
+            },25)
+    }
+</script>
