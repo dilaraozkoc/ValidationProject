@@ -1,97 +1,134 @@
 ﻿<style>
-    html, body{
-        display:block
-    }
-    input:valid{
-        border : 2px green solid
+
+    html, body {
+        display: block;
+
+        background-color:wheat;
     }
 
-    input :invalid {
+    input:valid {
+        border: 2px green solid
+    }
 
+    input:invalid {
         border: 2px red solid
     }
-  
+
+    textarea:valid {
+        border: 2px green solid
+    }
+
+    textarea:invalid {
+        border: 2px red solid
+    }
+
+    h2{
+        text-align: center;
+
+        font-family: 'Times New Roman';
+
+        border:coral double;
+
+        font-size: 30px;
+    }
+
+    label{
+        font-family: 'Times New Roman';
+
+        font-size: 20px;
+    }
+    button{
+        font-family: 'Times New Roman';
+    }
+
 </style>
 
-<h1>Kullanıcı Ekle</h1>
+<h2>User Login</h2>
+
 @if (ViewData.ContainsKey("UserAdded"))
 {
     if (ViewData["UserAdded"].Equals(true))
     {
-        // "kullanıcı kayıt edildi" mesajını veren bootstrap alert'i için gerekli HTML kodu (alert-success)
+        <div class="alert alert-success" role="alert">
+            Başarılı bir şekilde kayıt oldu..
+        </div>
     }
 }
-<form novalidate class="form-control" method="post" id="formId">
+<form novalidate method="post" id="formId">
     <div class="mb-3">
         <label for="nameInput" class="form-label">Name</label>
-        <input  name ="Name" type="text" class="form-control" id="nameInput" required pattern = "[a-z A-Z ]{2,}"  placeholder="Please enter your name" @*data-message="Lütfen en az 2 char"*@>
-        <div id="name" class="form-text"></div>
+        <input name="Name" type="text" class="form-control" required id="nameInput" pattern="[a-z A-Z ]{2,}" placeholder="Please enter your name" data-message="en az 2 karakter, sadece büyük ya da küçük harfler">
     </div>
     <div class="mb-3">
         <label for="surnameInput" class="form-label">Surname</label>
-        <input name="Surname" type="text" class="form-control" id="surnameInput" required pattern="[a-z A-Z ]{2,}" placeholder="Please enter your surname">
-        <div id="surname" class="form-text"></div>
+        <input name="Surname" type="text" class="form-control" id="surnameInput" required pattern="[a-z A-Z ]{2,}" placeholder="Please enter your surname" data-message="en az 2 karakter, sadece büyük ya da küçük harfler">
     </div>
     <div class="mb-3">
         <label for="birthdayInput" class="form-label">Birthday</label>
-        <input name="Birthday" type="datetime-local" class="form-control" required min="1900-01-01" id="birthdayInput">
-        <div id="birthday" class="form-text"></div>
+        <input name="DateOfBirth" type="date" class="form-control" required id="birthdayInput" min="1900-01-01" data-message="minimum= 1 ocak 1900, maksimum= bugün">
     </div>
     <div class="mb-3">
         <label for="phoneInput" class="form-label">Phone Number</label>
-        <input type="tel" class="form-control" id="phoneInput">
-        <div id="phone" class="form-text"></div>
-        <div class="alert alert-danger"></div>
+        <input name="Phone" type="tel" class="form-control" id="phoneInput">
     </div>
     <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Email address</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        <input name="Email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
     </div>
     <div class="mb-3">
-        <label for="AddressInput" class="form-label">Address</label>
-        @*<input type="text" class="form-control" id="AddressInput">*@
-        <textarea rows=" 5" cols="30" id="phoneInput"></textarea>
-        <div id="address" class="form-text"></div>
+        <label for="Textarea" class="form-label">Address</label>
+        <textarea name="Address" class="form-control" id="Textarea" rows="3"></textarea>
     </div>
-    <button type="submit" class="btn btn-primary btn-lg">Add User</button>
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-lg">Add User</button>
+    </div>
+  
 </form>
 
 <script>
-    const todayDate = new Date.toISOString().split('T')[0];
+
+    const todayDate = new Date().toISOString().split('T')[0];
+
     const inputDate = document.querySelector('#birthdayInput');
-    const minDate = inputDate.getAttribute('min');
     inputDate.setAttribute('max', todayDate);
-    const errorMassage = 'Doğum tarihi ${mindate}' ile ${max}
+
+    const minDate = inputDate.getAttribute('min');
+
+    const errorMassage = `Doğum tarihi ${minDate} ile ${todayDate} arasında olmalıdır.`
+    inputDate.setAttribute('data-message', errorMassage);
 
     const form = document.querySelector("#formId");
-    const inputArray =Array.from(form.querySelectorAll('input, textarea'));
+    const inputArray = Array.from(form.querySelectorAll('input, textarea'));
 
-    form.addEventListener('submit',function(e){
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
 
         let invalidCount = 0;
 
         inputArray.forEach(inp => {
+
             if (!inp.validity.valid) {
 
                 showAlert(inp);
                 invalidCount++;
-
                 return;
             }
-           hideInvalifAlert();
+
+            hideInvalidAlert(inp);
         });
+
         if (invalidCount == 0) {
             form.submit();
         }
     })
 
-   
 
 
-    function showAlert(inp){
-        if(inp.parentElemet.quertSelectorAll(".alert").lenth){
+
+    function showAlert(inp) {
+
+        if (inp.parentElement.querySelectorAll(".alert").lenght) 
+        {
             return;
         }
 
@@ -101,34 +138,39 @@
 
         text.innerText = inp.getAttribute('data-message');
 
-        alert.classList.append("alert","alert-danger","mt-1","p-2");
+        alert.classList.add("alert", "alert-danger", "mt-1", "p-2");
 
         alert.append(text);
+
         inp.parentElement.appendChild(alert);
-        setTimeout(()=>{
+
+        setTimeout(() => {
             startRemove(alert);
-        },3000);
+        }, 5000);
     }
 
-    function hideInvalifAlert(){
-        const alerts = Array.from(inp.parentElement.querrySelectorAll(".alert"))
+    function hideInvalidAlert(inp) {
+
+        const alerts = Array.from(inp.parentElement.querySelectorAll("alert"));
+
         alerts.forEach(a => a.remove());
 
     }
 
-    function startRemove(inp){
+    function startRemove(inp) {
+
         let opacity = 1;
 
         let handle = setInterval(() => {
-            if(opacity <=0)
-            {
+
+            if (opacity <= 0) {
                 inp.remove();
                 clearInterval(handle);
                 return;
             }
-
             opacity -= 0.02;
             inp.style.opcity = opacity;
-            },25)
+
+        }, 25)
     }
 </script>
